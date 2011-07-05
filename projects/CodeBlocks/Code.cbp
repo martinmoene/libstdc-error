@@ -11,36 +11,37 @@
 				<Option compiler="gcc" />
 			</Target>
 		</Build>
-		<Unit filename="Makefile.gcc" />
-		<Unit filename="Makefile.vc" />
-		<Unit filename="Readme.txt" />
-		<Unit filename="doc\Doxyfile" />
-		<Unit filename="doc\src\ex-ecore.c">
+		<Unit filename="..\..\LICENSE_1_0.txt" />
+		<Unit filename="..\..\Makefile.gcc" />
+		<Unit filename="..\..\Makefile.vc" />
+		<Unit filename="..\..\Readme.txt" />
+		<Unit filename="..\..\doc\Doxyfile" />
+		<Unit filename="..\..\doc\src\ex-ecore.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="doc\src\ex-emalloc.c">
+		<Unit filename="..\..\doc\src\ex-emalloc.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="doc\src\ex-estdio.c">
+		<Unit filename="..\..\doc\src\ex-estdio.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="mkg++.bat" />
-		<Unit filename="mkgcc.bat" />
-		<Unit filename="mkvc++.bat" />
-		<Unit filename="mkvc.bat" />
-		<Unit filename="src\ecore.c">
+		<Unit filename="..\..\mkg++.bat" />
+		<Unit filename="..\..\mkgcc.bat" />
+		<Unit filename="..\..\mkvc++.bat" />
+		<Unit filename="..\..\mkvc.bat" />
+		<Unit filename="..\..\src\ecore.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src\ecore.h" />
-		<Unit filename="src\emalloc.c">
+		<Unit filename="..\..\src\ecore.h" />
+		<Unit filename="..\..\src\emalloc.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src\emalloc.h" />
-		<Unit filename="src\error.h" />
-		<Unit filename="src\estdio.c">
+		<Unit filename="..\..\src\emalloc.h" />
+		<Unit filename="..\..\src\error.h" />
+		<Unit filename="..\..\src\estdio.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="src\estdio.h" />
+		<Unit filename="..\..\src\estdio.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
