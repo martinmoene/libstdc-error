@@ -1,3 +1,7 @@
+
+
+# Original 
+
 Provide error checked version of various functions from std C library.
 
 Created on 3 July 2011, by Martin Moene

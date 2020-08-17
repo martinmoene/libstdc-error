@@ -37,7 +37,7 @@
  * The ruling assumption is that a program is exited when an error occurs.
  *
  * The idea was gleaned from:
- * - Brian W. Kernighan and Rob Pike. The Practice of Programming. Addison–Wesley, 1999. ISBN 0-201-61586-X.
+ * - Brian W. Kernighan and Rob Pike. The Practice of Programming. Addisonï¿½Wesley, 1999. ISBN 0-201-61586-X.
  *
  * Currently the module consists of the following submodules:
  * - \ref ul_stdclib_error_core - basic error functions
@@ -63,7 +63,7 @@
  * The ruling assumption is that a program is exited when an error occurs.
  *
  * The idea was gleaned from:
- * - Brian W. Kernighan and Rob Pike. The Practice of Programming. Addison–Wesley, 1999. ISBN 0–201–61586–X.
+ * - Brian W. Kernighan and Rob Pike. The Practice of Programming. Addisonï¿½Wesley, 1999. ISBN 0ï¿½201ï¿½61586ï¿½X.
  *
  * ecore.h provides that basic tools to create error functions. See estdio.h and
  * emalloc.h for function-specific solutions.
