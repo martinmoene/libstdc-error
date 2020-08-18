@@ -29,10 +29,25 @@
 
 ## 2. design
 
-- using C++17 (or better) core language
-- no classes
-- no inheritance
-- logging -- no direct console access
+- standard C++ (17 or better) core language
+  - no classes
+  - no inheritance
+  - overloads are ok and are inside
+```cpp
+template<size_t N>
+constexpr inline size_t strlen ( const char (*str)[N] ) noexcept
+{
+    return N;
+}
+
+template<size_t N>
+constexpr inline size_t strlen ( const char (&str)[N] ) noexcept
+{
+    return N;
+}
+```
+- compile time assertions are used
+- **logging** -- no direct console access
     -  user provided and defined
        -  logging function
        -  logging target 

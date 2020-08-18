@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "crt_proxy_app", "crt_proxy_app.vcxproj", "{E19B86D2-AEFA-40B1-85DF-B64DB914B661}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3DDF4E8A-F074-4781-AB54-731412B7CFA7}"
-	ProjectSection(SolutionItems) = preProject
-		..\Readme.md = ..\Readme.md
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
