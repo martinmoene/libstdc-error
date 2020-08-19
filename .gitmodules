@@ -1,0 +1,3 @@
+[submodule "crt_proxy_app/dbj--simplelog"]
+	path = crt_proxy_app/dbj--simplelog
+	url = https://github.com/dbj-systems/dbj--simplelog.git
