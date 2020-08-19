@@ -27,26 +27,18 @@ static inline void test_strlen()
 
 int main( const int argc, char * argv[] )
 {
-    if (EXIT_SUCCESS == dbj_simple_log_startup( argv[0] ))
-    {
+    if (EXIT_SUCCESS != dbj_simple_log_startup(argv[0]))
+
+        return EXIT_FAILURE;
         auto lfp = current_log_file_path();
-
         FILE* fp_ = dbj_fhandle_log_file_ptr(NULL);
-
         assert(fp_);
-
-        int errcode = ferror(fp_);
-        if (errcode != 0) {
-            perror( __FILE__ " # " _CRT_STRINGIZE(__LINE__) );
-            clearerr_s(fp_);
-        }
+        DBJ_FERROR(fp_);
 
         int numflushed = _flushall();
         fprintf(stderr, "There were %d streams flushed\n", numflushed);
         
         if (fp_) { ::fclose(fp_); fp_ = nullptr; }
-    }
-    else
-        return EXIT_FAILURE;
+   return EXIT_SUCCESS ;
 }
 
