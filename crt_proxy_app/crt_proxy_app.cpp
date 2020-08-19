@@ -32,6 +32,17 @@ int main( const int argc, char * argv[] )
         auto lfp = current_log_file_path();
 
         FILE* fp_ = dbj_fhandle_log_file_ptr(NULL);
+
+        assert(fp_);
+
+        int errcode = ferror(fp_);
+        if (errcode != 0) {
+            perror( __FILE__ " # " _CRT_STRINGIZE(__LINE__) );
+            clearerr_s(fp_);
+        }
+
+        int numflushed = _flushall();
+        fprintf(stderr, "There were %d streams flushed\n", numflushed);
         
         if (fp_) { ::fclose(fp_); fp_ = nullptr; }
     }
