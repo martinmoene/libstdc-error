@@ -18,7 +18,8 @@
  crt on winows
 ------------------------------------------------------------------------------
 Each and every crt function on windows is implemented by calling WIN32
-Using crt is just a shortcut.
+Using crt is just a shortcut to WIN32 API.
+
 win console is win32 app with std streams created and attached
 C/C++ real life apps are not console apps. and very likely are not GUI apps
 they are just server side apps. invisible. 
