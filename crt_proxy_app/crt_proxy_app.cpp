@@ -25,20 +25,31 @@ static inline void test_strlen()
 
 }
 
+struct dbj_simplelog_finalizer final {
+
+    ~dbj_simplelog_finalizer() {
+        FILE* fp_ = dbj_fhandle_log_file_ptr(NULL);
+        if (fp_) {
+            DBJ_FERROR(fp_);
+            #ifdef _DEBUG
+            int numflushed = _flushall();
+            fprintf(stderr, "There were %d streams flushed\n", numflushed);
+            #else
+            (void)_flushall();
+            #endif
+               if (fp_) { ::fclose(fp_); fp_ = nullptr; }
+        }
+    }
+};
+
+inline dbj_simplelog_finalizer dsf_ ;
+
 int main( const int argc, char * argv[] )
 {
     if (EXIT_SUCCESS != dbj_simple_log_startup(argv[0]))
         return EXIT_FAILURE;
-        
-        auto lfp = current_log_file_path();
-        FILE* fp_ = dbj_fhandle_log_file_ptr(NULL);
-        assert(fp_);
-        DBJ_FERROR(fp_);
 
-        int numflushed = _flushall();
-        fprintf(stderr, "There were %d streams flushed\n", numflushed);
-        
-        if (fp_) { ::fclose(fp_); fp_ = nullptr; }
+    test_strlen() ;
    return EXIT_SUCCESS ;
 }
 
