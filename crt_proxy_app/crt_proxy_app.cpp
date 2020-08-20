@@ -28,18 +28,8 @@ static inline void test_strlen()
 struct dbj_simplelog_finalizer final {
 
     ~dbj_simplelog_finalizer() {
-        FILE* fp_ = dbj_fhandle_log_file_ptr(NULL);
-        if (fp_) {
-            DBJ_FERROR(fp_);
-            #ifdef _DEBUG
-            int numflushed = _flushall();
-            fprintf(stderr, "There were %d streams flushed\n", numflushed);
-            #else
-            (void)_flushall();
-            #endif
-               if (fp_) { ::fclose(fp_); fp_ = nullptr; }
+            dbj_log_finalize();
         }
-    }
 };
 
 inline dbj_simplelog_finalizer dsf_ ;
