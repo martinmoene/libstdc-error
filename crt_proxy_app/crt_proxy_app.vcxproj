@@ -149,15 +149,14 @@
   <ItemGroup>
     <ClCompile Include="..\crt_proxy_lib\crt_proxy_lib.cpp" />
     <ClCompile Include="crt_proxy_app.cpp" />
-    <ClCompile Include="dbj--simplelog\dbj_fhandle.c" />
-    <ClCompile Include="dbj--simplelog\log.c" />
+    <ClCompile Include="dbj--simplelog\dbj_simple_log.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\crt_proxy_lib\crt_proxy_lib.h" />
     <ClInclude Include="..\crt_proxy_lib\optional_bare.h" />
     <ClInclude Include="crt_proxy_app.h" />
     <ClInclude Include="dbj--simplelog\dbj_fhandle.h" />
-    <ClInclude Include="dbj--simplelog\log.h" />
+    <ClInclude Include="dbj--simplelog\dbj_simple_log.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\crt_proxy_lib\readme.md" />

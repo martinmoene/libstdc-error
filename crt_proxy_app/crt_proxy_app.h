@@ -4,5 +4,8 @@
 
 #include "../crt_proxy_lib/crt_proxy_lib.h"
 
+#ifdef _DEBUG
 #define DBJ_LOG_TESTING
-#include "dbj--simplelog/log.h"
+#endif
+
+#include "dbj--simplelog/dbj_simple_log.h"

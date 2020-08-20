@@ -28,8 +28,8 @@ static inline void test_strlen()
 int main( const int argc, char * argv[] )
 {
     if (EXIT_SUCCESS != dbj_simple_log_startup(argv[0]))
-
         return EXIT_FAILURE;
+        
         auto lfp = current_log_file_path();
         FILE* fp_ = dbj_fhandle_log_file_ptr(NULL);
         assert(fp_);

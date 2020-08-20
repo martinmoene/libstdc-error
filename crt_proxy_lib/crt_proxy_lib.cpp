@@ -1,3 +1,5 @@
+/* (c) 2019-2020 by dbj.org   -- LICENSE DBJ -- https://dbj.org/license_dbj/ */
+
 #include "crt_proxy_lib.h"
 
 #ifdef __STDC_ALLOC_LIB__
