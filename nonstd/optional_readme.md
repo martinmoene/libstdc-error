@@ -1,3 +1,5 @@
+
+> DBJ NOTE: this is nonstd::optional **not** nonstd bare optional which is currently in use by `crt_proxy_lib`
 # optional lite
 > An single-file header-only version of a C++17-like optional, a nullable object for C++98, C++11 and later
 

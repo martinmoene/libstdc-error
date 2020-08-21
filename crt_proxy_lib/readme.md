@@ -4,28 +4,31 @@
 > Copyright &copy; 2019-2020, Dusan B. Jovanovic (dbj@dbj.org)
 
 - [1. motivation](#1-motivation)
-  - [1.1. run-time requirements](#11-run-time-requirements)
+  - [1.1. strict run-time requirements](#11-strict-run-time-requirements)
 - [2. design](#2-design)
   - [2.1. returns handling is new error handling policy](#21-returns-handling-is-new-error-handling-policy)
   - [2.2. benchmarking policy](#22-benchmarking-policy)
-- [3. implementation](#3-implementation)
-  - [3.1. Dependencies](#31-dependencies)
+- [3. Logging is important](#3-logging-is-important)
+- [4. implementation](#4-implementation)
+  - [4.1. Dependencies](#41-dependencies)
 
 ## 1. motivation
 
-- decoupling users from crt legacy issues
-    - errno based error handling
-    - crashing on wrong input
-    - not crashing but returning wrong results, on bad input
-- supporting standard C++ users labouring under strict run-time requirements
+- decoupling restricted run-time callers, from crt legacy issues
+  - CRT legacy issues (non exhaustive list)
+    1. errno based error handling
+    1. crashing on wrong input
+    1. not crashing but returning wrong results, on bad input
 
-### 1.1. run-time requirements
+### 1.1. strict run-time requirements
 - no std lib
 - no throw/try/catch
 - no "special" return values 
 - no returns in arguments
 - no special globals
 - no magical constants
+
+> that list usualy means, restricted run-time apps can not use standard C++ lib
 
 ## 2. design
 
@@ -93,8 +96,18 @@ namespace dbj {
   - size
 - Windows Task Manager results are part of benchmarking results
 
+## 3. Logging is important
 
-## 3. implementation
+> In WIN32 parlance module is a component.
+
+Win console is just an win32 app with std streams created and attached.
+C/C++ real life apps are not console apps. And (very likely) are not GUI apps
+they are just server side apps. Invisible. 
+
+Each data center or just simply server side component will have to have some logging used.
+Without logging in place admins can not see what is going on with your component. Neither can you.
+
+## 4. implementation
 
 - one header and one cpp file
    - just include and use
@@ -128,10 +141,13 @@ namespace dbj {
 #endif
 ```
 
-### 3.1. Dependencies
+### 4.1. Dependencies
 
-1. Martin Moene's `nonstd` : `nonstd::optional`.
-   It allows us to have the optional, minus std lib, minus exceptions.
+Martin Moene's non [standard bare optional](https://github.com/martinmoene/optional-bare).
+It allows us to have the optional, minus std lib, minus exceptions.
+
+The limitations are the handled value is required to be copyable and default constructible.
+
 ```cpp
 // nonstd optional
 #define optional_CONFIG_SELECT_OPTIONAL optional_OPTIONAL_NONSTD

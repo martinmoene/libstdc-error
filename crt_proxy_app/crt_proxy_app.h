@@ -2,6 +2,9 @@
 
 // #define _CRT_SECURE_NO_WARNINGS 1
 
+#undef CRT_PROXY_LIB_LOG
+#define CRT_PROXY_LIB_LOG(M_) log_error("%s() : %s", __func__, M_ )
+
 #include "../crt_proxy_lib/crt_proxy_lib.h"
 
 #ifdef _DEBUG

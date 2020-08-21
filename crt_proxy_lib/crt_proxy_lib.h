@@ -1,7 +1,7 @@
 #ifndef CRT_PROXY_LIB_INC_
 #define CRT_PROXY_LIB_INC_
 
-#define CRT_PROXY_LIB_VERSION "0.0.1"
+#define CRT_PROXY_LIB_VERSION "0.0.2"
 
 #undef CRT_PROXY_LIB_NDEBUG
 #ifndef _DEBUG
@@ -40,7 +40,7 @@
 
 // default logging is going to stderr
 // reminder: stderr is buffered by default
-// usage pattern is: log and return the same message
+// requirement is: log and return the same message
 #ifndef CRT_PROXY_LIB_LOG
 #define CRT_PROXY_LIB_LOG(M_) ( fprintf( stderr, "%s(%d) : %s() : %s", __FILE__ , __LINE__, __func__, M_ ), M_ )
 #endif // ! CRT_PROXY_LIB_LOCK
