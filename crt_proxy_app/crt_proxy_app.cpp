@@ -2,17 +2,19 @@
 
 #include "crt_proxy_app.h"
 
+#define SX(fmt_, x_) log_info("%s : " fmt_, #x_, x_ )
+
 static inline void test_strlen()
 {
     namespace cpl = crt_proxy_lib;
 
     const char* input_ = "ABRA\v\n\f\r\t CA DABRA";
 
-    auto rezult_ = cpl::strlen(input_);
+    SX( "%d", cpl::strlen(input_) );
 
-    static_assert(19 == cpl::strlen("ABRA\v\n\f\r\t CA DABRA").value);
+    SX("%d" , 19 == cpl::strlen("ABRA\v\n\f\r\t CA DABRA").value);
 
-    static_assert(1 == cpl::strlen("").value);
+    SX("%d" , 1 == cpl::strlen("").value);
 
     const char* nullstr{};
 
@@ -24,6 +26,12 @@ static inline void test_strlen()
         auto msg = stat;
         log_warn("Already logged: %s", msg);
     }
+
+    SX("%s", cpl::strcmp("", "OK").status );
+    SX("%s", cpl::strcmp(0, "OK").status );
+
+    SX( "%d" , *(cpl::strcmp("NOT", "OK").value) );
+    SX( "%d" , *(cpl::strcmp("OK", "OK").value) );
 
 }
 
@@ -42,6 +50,9 @@ int main( const int argc, char * argv[] )
         return EXIT_FAILURE;
 
     test_strlen() ;
+
+    printf("\n\n");
+
    return EXIT_SUCCESS ;
 }
 

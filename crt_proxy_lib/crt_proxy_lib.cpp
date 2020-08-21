@@ -80,14 +80,14 @@ valstat<size_t> strlen ( const char * & input_ ) noexcept
         if (nullptr == input_)
             // ERROR metastate
             // same message is loged and returned
-            return { {}, CRT_PROXY_LIB_LOG_TRACE("ERROR : null argument") };
+            return { {}, CRT_PROXY_LIB_LOG_ERROR(" null argument") };
 /*
 MS DOCS are saying:
 
 Always clear errno by calling _set_errno(0) immediately before a call that may set it, 
 and check it immediately after the call.
 
-Because we use valstat to pass the metastate we ca allways return INFO metastate 
+Because we use valstat to pass the metastate we can allways return INFO metastate 
 with the errno obtained immediately after the call
 
         _set_errno(0);
@@ -101,5 +101,28 @@ errno on proper arguments given, which we check here anyway.
     // OK metastate
         return { ::strlen(input_), {} };
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// strcmp proxy begins here
+// returned valstat is defined here, not before
+valstat< int >
+strcmp(const char* lhs_, const char* rhs_)
+{
+    CRT_PROXY_LIB_PADLOCK;
+
+    if (!lhs_ || !rhs_)
+        // ERROR metastate return
+        // value is empty, status is not
+        return { {}, CRT_PROXY_LIB_LOG_ERROR("null pointer argument received") };
+
+    if (is_empty(lhs_) || is_empty(rhs_))
+        // ERROR metastate return
+        return { {}, CRT_PROXY_LIB_LOG_ERROR("empty argument received") };
+
+    // OK metastate return
+    // value is not empty, status is
+    return { ::strcmp(lhs_, rhs_) , {} };
+}
+//////////////////////////////////////////////////////////////////////////////////////////
 
 } //  namespace crt_proxy_lib

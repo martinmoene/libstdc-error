@@ -20,6 +20,9 @@ if this header is not defined crt_proxy_lib_log_default.h is used which prints t
 
 */
 
+#include <assert.h> //
+#include <stdio.h> // _snprintf_s
+
 template<typename ... Args >
 inline auto crt_proxy_lib_log_default (
     const char* file,

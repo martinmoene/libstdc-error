@@ -107,12 +107,12 @@ Each data center or just simply server side component will have to have some log
 Users of crt proxy lib need to deliver header named `crt_proxy_lib_log.h` with actual logging implementation. Macros to be defined are:
 ```cpp
 // Same syntax as for the printf
-     CRT_PROXY_LIB_LOG_TRACE(...);
-     CRT_PROXY_LIB_LOG_DEBUG(...);
-     CRT_PROXY_LIB_LOG_INFO(...);
-     CRT_PROXY_LIB_LOG_WARN(...);
-     CRT_PROXY_LIB_LOG_ERROR(...);
-     CRT_PROXY_LIB_LOG_FATAL(...);
+CRT_PROXY_LIB_LOG_TRACE(...);
+CRT_PROXY_LIB_LOG_DEBUG(...);
+CRT_PROXY_LIB_LOG_INFO(...);
+CRT_PROXY_LIB_LOG_WARN(...);
+CRT_PROXY_LIB_LOG_ERROR(...);
+CRT_PROXY_LIB_LOG_FATAL(...);
 ```
 if this header is not defined `crt_proxy_lib_log_default.h` is used which 
 defines macros that print to stderr.

@@ -4,9 +4,9 @@
 
 #include "../crt_proxy_lib/crt_proxy_lib.h"
 
-#ifdef _DEBUG
-#define DBJ_LOG_TESTING
-#endif
+//#ifdef _DEBUG
+//#define DBJ_LOG_TESTING
+//#endif
 
 /* we want console while in debug builds */
 #ifdef _DEBUG

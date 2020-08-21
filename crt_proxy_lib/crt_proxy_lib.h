@@ -3,7 +3,7 @@
 
 /* (c) 2019-2020 by dbj.org   -- LICENSE DBJ -- https://dbj.org/license_dbj/ */
 
-#define CRT_PROXY_LIB_VERSION "0.0.2"
+#define CRT_PROXY_LIB_VERSION "0.1.0"
 
 #undef CRT_PROXY_LIB_NDEBUG
 #ifndef _DEBUG
@@ -147,8 +147,24 @@ strlen ( const char (&str)[N] ) noexcept
     return { N, {} }; // OK metastate
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+/// neither CRT or std lib have the paradigm of "empty" properly grasped ... yet
+/// here we will provide is_empty overloads that operate on values 
+/// not on types like std::empty() does
+ 
+/// empty string
+constexpr bool is_empty(const char* const s_) noexcept {
+    return (s_ && (s_[0] == '\0'));
+}
 
+// empty char array
+template<size_t N>
+constexpr bool is_empty(const char(&s_) [N]) noexcept {
+    return (s_[0] == '\0') ;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+valstat< int >  strcmp(const char* lhs_, const char* rhs_);
 
 } //  namespace crt_proxy_lib
 
