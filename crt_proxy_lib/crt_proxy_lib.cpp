@@ -14,6 +14,7 @@
 #include <string.h>
 #include <assert.h>
 #include <malloc.h>
+#include <locale.h>
 /*
  crt on winows
 ------------------------------------------------------------------------------
@@ -68,11 +69,6 @@ if (ferror(FP_) != 0) {\
 
 namespace crt_proxy_lib
 {
-// default lock/unlock is no lock/unlock
-
-// default logging is going to stderr
-// reminder: stderr is buffered by default
-
 valstat<size_t> strlen ( const char * & input_ ) noexcept
 {
      CRT_PROXY_LIB_PADLOCK;
@@ -124,5 +120,54 @@ strcmp(const char* lhs_, const char* rhs_)
     return { ::strcmp(lhs_, rhs_) , {} };
 }
 //////////////////////////////////////////////////////////////////////////////////////////
+valstat< void* >    memccpy(void* CRT_PROXY_LIB_RESTRICT, const void* CRT_PROXY_LIB_RESTRICT, int, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< void* >    memchr(const void*, int, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< int >      memcmp(const void*, const void*, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< void* >    memcpy(void* CRT_PROXY_LIB_RESTRICT, const void* CRT_PROXY_LIB_RESTRICT, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< void* >    memmove(void*, const void*, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< void* >    memset(void*, int, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< char* >    stpcpy(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< char* >    stpncpy(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< char* >    strcat(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< char* >    strchr(const char*, int){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< int >      strcoll(const char*, const char*){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< int >      strcoll_l(const char*, const char*, _locale_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< char* >    strcpy(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< size_t >   strcspn(const char*, const char*){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< char* >    strdup(const char*){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< char* >    strerror(int){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< char* >    strerror_l(int, _locale_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< int >      strerror_r(int, char*, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+// see above -- valstat< size_t >   strlen(const char*){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< char* >    strncat(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< int >      strncmp(const char*, const char*, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< char* >    strncpy(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< char* >    strndup(const char*, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< size_t >   strnlen(const char*, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< char* >    strpbrk(const char*, const char*){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< char* >    strrchr(const char*, int){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< char* >    strsignal(int){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< size_t >   strspn(const char*, const char*){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< char* >    strstr(const char*, const char*){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+valstat< char* >    strtok(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< char* >    strtok_r(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, char** CRT_PROXY_LIB_RESTRICT){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< size_t >   strxfrm(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, size_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
+
+valstat< size_t >   strxfrm_l(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, size_t, _locale_t){  CRT_PROXY_LIB_PADLOCK ;  return {  {} , CRT_PROXY_LIB_LOG_ERROR("not yet implemented") };  }
 
 } //  namespace crt_proxy_lib

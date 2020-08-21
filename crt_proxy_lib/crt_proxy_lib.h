@@ -95,11 +95,14 @@ namespace dbj {
 // defualt constructible and copyable
 // in the context of CRT types that should work
 // as they are all fundamental types
+// probably the best requirement would be to demand
+// T to yield true from std::is_standard_layout<T>
 #include "optional_bare.h"
 
 namespace crt_proxy_lib 
 {
-    // any type used. nonstd bare CRT_PROXY_LIB permitting.
+    // CRT uses only fundamental types , besides pointers and few trivial layout structs
+    // T is any fundamental type used. nonstd bare CRT_PROXY_LIB permitting.
     template <typename T_ >
     using valstat = dbj::valstat<
         // value type
@@ -113,6 +116,11 @@ namespace crt_proxy_lib
 // crt proxy functions begin here
 //
 //////////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef __cplusplus
+    #define CRT_PROXY_LIB_RESTRICT restrict
+#else
+    #define CRT_PROXY_LIB_RESTRICT __restrict 
+#endif // __cplusplus
 
 // NOTE: we do use CRT names in this namespace and that compiles
 // which means these names can not be used without namespace prefix
@@ -164,8 +172,135 @@ constexpr bool is_empty(const char(&s_) [N]) noexcept {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-valstat< int >  strcmp(const char* lhs_, const char* rhs_);
+// proxyes for <string.h>
+//
+valstat< int >      strcmp(const char* lhs_, const char* rhs_);
+valstat< void* >    memccpy(void* CRT_PROXY_LIB_RESTRICT, const void* CRT_PROXY_LIB_RESTRICT, int, size_t);
+
+valstat< void* >    memchr(const void*, int, size_t);
+valstat< int >      memcmp(const void*, const void*, size_t);
+valstat< void* >    memcpy(void* CRT_PROXY_LIB_RESTRICT, const void* CRT_PROXY_LIB_RESTRICT, size_t);
+valstat< void* >    memmove(void*, const void*, size_t);
+valstat< void* >    memset(void*, int, size_t);
+
+valstat< char* >    stpcpy(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT);
+valstat< char* >    stpncpy(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, size_t);
+
+valstat< char* >    strcat(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT);
+valstat< char* >    strchr(const char*, int);
+valstat< int >      strcmp(const char*, const char*);
+valstat< int >      strcoll(const char*, const char*);
+
+valstat< int >      strcoll_l(const char*, const char*, _locale_t);
+
+valstat< char* >    strcpy(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT);
+valstat< size_t >   strcspn(const char*, const char*);
+
+valstat< char* >    strdup(const char*);
+
+valstat< char* >    strerror(int);
+
+valstat< char* >    strerror_l(int, _locale_t);
+valstat< int >      strerror_r(int, char*, size_t);
+
+// valstat< size_t >   strlen(const char*);
+valstat< char* >    strncat(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, size_t);
+valstat< int >      strncmp(const char*, const char*, size_t);
+valstat< char* >    strncpy(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, size_t);
+
+valstat< char* >    strndup(const char*, size_t);
+valstat< size_t >   strnlen(const char*, size_t);
+
+valstat< char* >    strpbrk(const char*, const char*);
+valstat< char* >    strrchr(const char*, int);
+
+valstat< char* >    strsignal(int);
+
+valstat< size_t >   strspn(const char*, const char*);
+valstat< char* >    strstr(const char*, const char*);
+valstat< char* >    strtok(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT);
+
+valstat< char* >    strtok_r(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, char** CRT_PROXY_LIB_RESTRICT);
+
+valstat< size_t >   strxfrm(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, size_t);
+
+valstat< size_t >   strxfrm_l(char* CRT_PROXY_LIB_RESTRICT, const char* CRT_PROXY_LIB_RESTRICT, size_t, _locale_t);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
 
 } //  namespace crt_proxy_lib
 
+/*
+
+in this release we shall implement string.h functions
+
+string.h synopsis
+https://pubs.opengroup.org/onlinepubs/9699919799/
+
+
+The <string.h> header shall define NULL and size_t as described in <stddef.h>.
+
+    The <string.h> header shall define the locale_t type as described in <locale.h>.  
+
+The following shall be declared as functions and may also be defined as macros. 
+Function prototypes shall be provided for use with ISO C standard compilers.
+
+  
+void    *memccpy(void *restrict, const void *restrict, int, size_t);
+ 
+void    *memchr(const void *, int, size_t);
+int      memcmp(const void *, const void *, size_t);
+void    *memcpy(void *restrict, const void *restrict, size_t);
+void    *memmove(void *, const void *, size_t);
+void    *memset(void *, int, size_t);
+  
+char    *stpcpy(char *restrict, const char *restrict);
+char    *stpncpy(char *restrict, const char *restrict, size_t);
+ 
+char    *strcat(char *restrict, const char *restrict);
+char    *strchr(const char *, int);
+int      strcmp(const char *, const char *);
+int      strcoll(const char *, const char *);
+  
+int      strcoll_l(const char *, const char *, locale_t);
+ 
+char    *strcpy(char *restrict, const char *restrict);
+size_t   strcspn(const char *, const char *);
+  
+char    *strdup(const char *);
+ 
+char    *strerror(int);
+  
+char    *strerror_l(int, locale_t);
+int      strerror_r(int, char *, size_t);
+ 
+size_t   strlen(const char *);
+char    *strncat(char *restrict, const char *restrict, size_t);
+int      strncmp(const char *, const char *, size_t);
+char    *strncpy(char *restrict, const char *restrict, size_t);
+  
+char    *strndup(const char *, size_t);
+size_t   strnlen(const char *, size_t);
+ 
+char    *strpbrk(const char *, const char *);
+char    *strrchr(const char *, int);
+  
+char    *strsignal(int);
+ 
+size_t   strspn(const char *, const char *);
+char    *strstr(const char *, const char *);
+char    *strtok(char *restrict, const char *restrict);
+  
+char    *strtok_r(char *restrict, const char *restrict, char **restrict);
+ 
+size_t   strxfrm(char *restrict, const char *restrict, size_t);
+  
+size_t   strxfrm_l(char *restrict, const char *restrict,
+             size_t, locale_t);
+
+*/
+
 #endif // CRT_PROXY_LIB_INC_
+
+
+
