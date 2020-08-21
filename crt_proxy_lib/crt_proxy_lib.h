@@ -1,6 +1,8 @@
 #ifndef CRT_PROXY_LIB_INC_
 #define CRT_PROXY_LIB_INC_
 
+/* (c) 2019-2020 by dbj.org   -- LICENSE DBJ -- https://dbj.org/license_dbj/ */
+
 #define CRT_PROXY_LIB_VERSION "0.0.2"
 
 #undef CRT_PROXY_LIB_NDEBUG
@@ -31,19 +33,47 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 // default lock/unlock is no lock / no unlock
-// user defined padlock type releases semaphore in destructor
+// user defined padlock type releases semaphore/mutex/critical section in destructor
 // grabs in constructor
+// crt_proxy_lib_lock.h, must define CRT_PROXY_LIB_PADLOCK
+
+#if __has_include("crt_proxy_lib_lock.h")
+    #include "crt_proxy_lib_lock.h"
+
 #ifndef CRT_PROXY_LIB_PADLOCK
-#define CRT_PROXY_LIB_PADLOCK
+#error  CRT_PROXY_LIB_PADLOCK is not defined?
 #endif // ! CRT_PROXY_LIB_LOCK
 
 
-// default logging is going to stderr
-// reminder: stderr is buffered by default
-// requirement is: log and return the same message
-#ifndef CRT_PROXY_LIB_LOG
-#define CRT_PROXY_LIB_LOG(M_) ( fprintf( stderr, "%s(%d) : %s() : %s", __FILE__ , __LINE__, __func__, M_ ), M_ )
-#endif // ! CRT_PROXY_LIB_LOCK
+#else
+// defualt is no locking
+    #ifndef CRT_PROXY_LIB_PADLOCK
+    #define CRT_PROXY_LIB_PADLOCK
+    #endif // ! CRT_PROXY_LIB_LOCK
+#endif // 
+
+/*
+Users of crt proxy lib need to deliver header named crt_proxy_lib_log.h with actual logging implementation
+Macros to be defined are:
+
+     CRT_PROXY_LIB_LOG_TRACE(...)
+     CRT_PROXY_LIB_LOG_DEBUG(...)
+     CRT_PROXY_LIB_LOG_INFO(...)
+     CRT_PROXY_LIB_LOG_WARN(...)
+     CRT_PROXY_LIB_LOG_ERROR(...)
+     CRT_PROXY_LIB_LOG_FATAL(...)
+
+     Syntax is same as for the printf.
+
+if this header is not defined crt_proxy_lib_log_default.h is used which 
+defines macros that print to stderr.
+*/
+#if __has_include("crt_proxy_lib_log.h")
+#include "crt_proxy_lib_log.h"
+#else
+#include "crt_proxy_lib_log_default.h"
+#endif // 
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 

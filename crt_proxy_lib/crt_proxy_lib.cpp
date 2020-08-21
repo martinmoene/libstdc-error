@@ -80,7 +80,7 @@ valstat<size_t> strlen ( const char * & input_ ) noexcept
         if (nullptr == input_)
             // ERROR metastate
             // same message is loged and returned
-            return { {}, CRT_PROXY_LIB_LOG("ERROR : null argument") };
+            return { {}, CRT_PROXY_LIB_LOG_TRACE("ERROR : null argument") };
 /*
 MS DOCS are saying:
 

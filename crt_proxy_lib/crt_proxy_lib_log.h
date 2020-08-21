@@ -3,6 +3,22 @@
 
 /* (c) 2019-2020 by dbj.org   -- LICENSE DBJ -- https://dbj.org/license_dbj/ 
 
+Users of crt proxy lib need to deliver header named crt_proxy_lib_log.h with actual logging implementation
+Macros to be defined are:
+
+     CRT_PROXY_LIB_LOG_TRACE(...) 
+     CRT_PROXY_LIB_LOG_DEBUG(...) 
+     CRT_PROXY_LIB_LOG_INFO(...) 
+     CRT_PROXY_LIB_LOG_WARN(...) 
+     CRT_PROXY_LIB_LOG_ERROR(...)
+     CRT_PROXY_LIB_LOG_FATAL(...)
+
+     Syntax is same as for the printf. 
+
+if this header is not defined crt_proxy_lib_log_default.h is used which prints to stderr.
+
+---------------------------------------------------------------------------------------------------
+
 In WIN32 parlance module is a component.
 
 Logging is important
@@ -44,27 +60,47 @@ char * hiragana = "平仮名" ;
 
 So we better stick to char *
 
-The users of crt_proxy_lib need to provide the following six functions.
-
-// format the message, log it and return it
-template<typename ... Args >
-const char * crt_proxy_lib_log_trace( 
-    const char * file, 
-    const long   line,
-    const char * fmt_string, 
-    Args ... args
-    );
-
-#define log_trace(...) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__)
-#define log_debug(...) log_log(LOG_DEBUG, __FILE__, __LINE__, __VA_ARGS__)
-#define log_info(...)  log_log(LOG_INFO,  __FILE__, __LINE__, __VA_ARGS__)
-#define log_warn(...)  log_log(LOG_WARN,  __FILE__, __LINE__, __VA_ARGS__)
-#define log_error(...) log_log(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
-#define log_fatal(...) log_log(LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__)
-
 */
 
+/*
+This is a header delivered by users who use dbj--simplelog
+https://github.com/dbj-systems/dbj--simplelog
+*/
+
+// all eventually goes in here
+extern "C" {
+#ifndef DBJ_LOG_LEVELS_ENUM_DEFINED
+#define DBJ_LOG_LEVELS_ENUM_DEFINED
+    typedef enum DBJ_LOG_LEVELS_ENUM { LOG_TRACE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL } DBJ_LOG_LEVELS_ENUM;
+#endif // DBJ_LOG_LEVELS_ENUM_DEFINED
+
+    void log_log(int /*level*/, const char* /*file*/, int /*line*/, const char* /*fmt*/, ...);
+}
+
+ // log and return
+// file and line are logged but not returned
 #undef CRT_PROXY_LIB_LOG_TRACE
-#define CRT_PROXY_LIB_LOG_TRACE(M_) crt_proxy_lib_log_trace(  __FILE__ , __LINE__, "%s(%d) : %s() : %s", __func__, M_ )
+#define CRT_PROXY_LIB_LOG_TRACE(...) \
+(log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__),   #__VA_ARGS__ )
+
+#undef CRT_PROXY_LIB_LOG_DEBUG
+#define CRT_PROXY_LIB_LOG_DEBUG(...) \
+(log_log(LOG_DEBUG, __FILE__, __LINE__, __VA_ARGS__),   #__VA_ARGS__ )
+
+#undef CRT_PROXY_LIB_LOG_INFO
+#define CRT_PROXY_LIB_LOG_INFO(...) \
+(log_log(LOG_INFO, __FILE__, __LINE__, __VA_ARGS__),   #__VA_ARGS__ )
+
+#undef CRT_PROXY_LIB_LOG_WARN
+#define CRT_PROXY_LIB_LOG_WARN(...) \
+(log_log(LOG_WARN, __FILE__, __LINE__, __VA_ARGS__),   #__VA_ARGS__ )
+
+#undef CRT_PROXY_LIB_LOG_ERROR
+#define CRT_PROXY_LIB_LOG_ERROR(...) \
+(log_log(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__),   #__VA_ARGS__ )
+
+#undef CRT_PROXY_LIB_LOG_FATAL
+#define CRT_PROXY_LIB_LOG_FATAL(...) \
+(log_log(LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__),   #__VA_ARGS__ )
 
 #endif // CRT_PROXY_LIB_LOG_INC_

@@ -98,14 +98,34 @@ namespace dbj {
 
 ## 3. Logging is important
 
-> In WIN32 parlance module is a component.
-
 Win console is just an win32 app with std streams created and attached.
 C/C++ real life apps are not console apps. And (very likely) are not GUI apps
 they are just server side apps. Invisible. 
 
-Each data center or just simply server side component will have to have some logging used.
-Without logging in place admins can not see what is going on with your component. Neither can you.
+Each data center or just simply server side component will have to have some logging used. Without logging in place admins can not see what is going on with your component. Neither can you.
+
+Users of crt proxy lib need to deliver header named `crt_proxy_lib_log.h` with actual logging implementation. Macros to be defined are:
+```cpp
+// Same syntax as for the printf
+     CRT_PROXY_LIB_LOG_TRACE(...);
+     CRT_PROXY_LIB_LOG_DEBUG(...);
+     CRT_PROXY_LIB_LOG_INFO(...);
+     CRT_PROXY_LIB_LOG_WARN(...);
+     CRT_PROXY_LIB_LOG_ERROR(...);
+     CRT_PROXY_LIB_LOG_FATAL(...);
+```
+if this header is not defined `crt_proxy_lib_log_default.h` is used which 
+defines macros that print to stderr.
+
+```cpp
+#if __has_include("crt_proxy_lib_log.h")
+// user defied logging
+#include "crt_proxy_lib_log.h"
+#else
+// default logging, to stderr
+#include "crt_proxy_lib_log_default.h"
+#endif 
+```
 
 ## 4. implementation
 
@@ -127,8 +147,8 @@ Without logging in place admins can not see what is going on with your component
   - if no user provided **defaults** are used
     - no locking
     - stderr as a log target
-- **Which version of C?**
-- it is a "cat and mouse" game one has to play with CL.exe to find out which C features are enabled or not
+- **Which version of C99?**
+- it is a "cat and mouse" game one has to play with CL.exe to find out which C99 features are enabled or not
   - that might change with each visual studio update.
 - we will not use deprecated crt function, whatever that means.
   - we will always try and use 'safe' versions

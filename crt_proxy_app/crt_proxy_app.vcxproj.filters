@@ -40,6 +40,12 @@
     <ClInclude Include="dbj--simplelog\dbj_simple_log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\crt_proxy_lib\crt_proxy_lib_log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\crt_proxy_lib\crt_proxy_lib_log_default.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\crt_proxy_lib\readme.md">

@@ -1,3 +1,4 @@
+/* (c) 2019-2020 by dbj.org   -- LICENSE DBJ -- https://dbj.org/license_dbj/ */
 
 #include "crt_proxy_app.h"
 
@@ -21,6 +22,7 @@ static inline void test_strlen()
     {
         // already logged
         auto msg = stat;
+        log_warn("Already logged: %s", msg);
     }
 
 }
