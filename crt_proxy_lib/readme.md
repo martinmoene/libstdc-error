@@ -4,38 +4,49 @@
 > Copyright &copy; 2019-2020, Dusan B. Jovanovic (dbj@dbj.org)
 
 - [1. motivation](#1-motivation)
-  - [1.1. strict run-time requirements](#11-strict-run-time-requirements)
 - [2. design](#2-design)
   - [2.1. returns handling is new error handling policy](#21-returns-handling-is-new-error-handling-policy)
-  - [2.2. benchmarking policy](#22-benchmarking-policy)
-- [3. Logging is important](#3-logging-is-important)
-- [4. implementation](#4-implementation)
-  - [4.1. Dependencies](#41-dependencies)
+  - [2.2. Logging is important](#22-logging-is-important)
+- [3. Implementation details](#3-implementation-details)
+  - [3.1. Locking](#31-locking)
+  - [3.3. Code structure details](#33-code-structure-details)
+  - [3.2. benchmarking attitude](#32-benchmarking-attitude)
+  - [3.4. Dependencies](#34-dependencies)
 
 ## 1. motivation
 
-- decoupling restricted run-time callers, from crt legacy issues
+Circa 2020 C++ is very rarely, if ever, used for application programming. C++ is used for systems programming.
+
+Who might use this library?  Teams wishing to code in standard C++ but who are under limitations, grouped as follows in two sets.
+
+- Limitations of  restricted run-time requirements
+  - specifically **not allowed to use** any of the following
+    -  std lib
+    -  throw/try/catch
+    -  "special" return values 
+    -  arguments for returns
+    -  special globals
+    -  magical constants
+
+Very often heap allocation is added to the list above. These limitations often leave no choice but using C Run Time aka CRT. But, CRT has issues too.
+
+- Limitation imposed by crt legacy issues. 
   - CRT legacy issues (non exhaustive list)
-    1. errno based error handling
-    1. crashing on wrong input
-    1. not crashing but returning wrong results, on bad input
+    1. errno based error handling aka using globals
+       - example: pure function can not use globals 
+    2. crashing on wrong input
+       - example: null arguments 
+    3. not crashing but returning wrong results
+       - example: empty strings as arguments 
 
-### 1.1. strict run-time requirements
-- no std lib
-- no throw/try/catch
-- no "special" return values 
-- no returns in arguments
-- no special globals
-- no magical constants
-
-> that list usualy means, restricted run-time apps can not use standard C++ lib
+Thus all of the above are limiting the design decisions and directly shaping the implementation.   
 
 ## 2. design
 
 - standard C++ (17 or better) core language
   - no classes
   - no inheritance
-  - overloads are ok and are inside
+  - overloads are ok and are in use inside. Example:
 ```cpp
 template<size_t N>
 constexpr inline size_t strlen ( const char (*str)[N] ) noexcept
@@ -50,15 +61,11 @@ constexpr inline size_t strlen ( const char (&str)[N] ) noexcept
 }
 ```
 - compile time assertions are used
-- **logging** -- no direct console access
-    -  user provided and defined
-       -  logging function
-       -  logging target 
--  resilience in the presence of threads
-   -  user provided lock/unlock two functions
+  - `static_assert()`
 
 ### 2.1. returns handling is new error handling policy
 
+- no runtime exit, abort or crash
 - null input, empty input or logically wrong input will provoke different responses
   - API consuming functions will have to capture that
 - based on the metastate paradigm -- [P2192](https://gitlab.com/dbjdbj/valstat/-/blob/07ce13ab26f662c7301a463fee55dc21cbd7a585/P2192R2.md)
@@ -88,15 +95,7 @@ namespace dbj {
 - **future extension**: status returned is handle to the message logged
    -  that handle will be GUID inside a `const char *` string
 
-### 2.2. benchmarking policy
-
-- comparing code is artificial results
-- comparing applications is true results
-  - performance
-  - size
-- Windows Task Manager results are part of benchmarking results
-
-## 3. Logging is important
+### 2.2. Logging is important
 
 Win console is just an win32 app with std streams created and attached.
 C/C++ real life apps are not console apps. And (very likely) are not GUI apps
@@ -126,8 +125,42 @@ defines macros that print to stderr.
 #include "crt_proxy_lib_log_default.h"
 #endif 
 ```
+## 3. Implementation details
 
-## 4. implementation
+### 3.1. Locking
+
+This library users may provide resilience in the presence of threads. Either users provide lock/unlock type or there is no locking:
+```cpp
+// default lock/unlock is no lock / no unlock
+// user defined padlock type releases semaphore/mutex/critical section in destructor
+// grabs in constructor
+// crt_proxy_lib_lock.h, must define CRT_PROXY_LIB_PADLOCK
+
+#if __has_include("crt_proxy_lib_lock.h")
+    #include "crt_proxy_lib_lock.h"
+#ifndef CRT_PROXY_LIB_PADLOCK
+#error  CRT_PROXY_LIB_PADLOCK is not defined?
+#endif // ! CRT_PROXY_LIB_LOCK
+#else
+// defualt is no locking
+    #ifndef CRT_PROXY_LIB_PADLOCK
+    #define CRT_PROXY_LIB_PADLOCK
+    #endif // ! CRT_PROXY_LIB_LOCK
+#endif // 
+```  
+Therefore users need to provide `crt_proxy_lib_lock.h` . Each proxy function implementation start in this manner:
+```cpp
+// standard prologue example
+valstat<size_t> strlen 
+( const char * & input_ ) 
+noexcept
+{
+     CRT_PROXY_LIB_PADLOCK;
+
+    // ... the rest goes here ...
+}
+```
+### 3.3. Code structure details
 
 - one header and one cpp file
    - just include and use
@@ -160,8 +193,15 @@ defines macros that print to stderr.
 #define _POSIX_C_SOURCE 200809L
 #endif
 ```
+### 3.2. benchmarking attitude
 
-### 4.1. Dependencies
+- comparing code is artificial benchmarking
+- comparing applications delivers true results for:
+  - performance
+  - size
+- Windows Task Manager results are part of benchmarking results
+
+### 3.4. Dependencies
 
 Martin Moene's non [standard bare optional](https://github.com/martinmoene/optional-bare).
 It allows us to have the optional, minus std lib, minus exceptions.
