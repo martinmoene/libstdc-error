@@ -3,14 +3,11 @@
 
 /* (c) 2019-2020 by dbj.org   -- LICENSE DBJ -- https://dbj.org/license_dbj/ */
 
+#ifndef _MSC_VER
+#error Sorry ... Windows only.
+#endif
+
 #define CRT_PROXY_LIB_VERSION "0.1.0"
-
-#undef CRT_PROXY_LIB_NDEBUG
-#ifndef _DEBUG
-#define CRT_PROXY_LIB_NDEBUG
-#endif // !_DEBUG
-
-// C++ language version detection (C++20 is speculative):
 
 #ifndef   CRT_PROXY_LIB_CPLUSPLUS
 # if defined(_MSVC_LANG ) && !defined(__clang__)
@@ -30,6 +27,11 @@
 #error crt proxy lib requires C++17 or better
 #endif
 
+#undef CRT_PROXY_LIB_NDEBUG
+#ifndef _DEBUG
+#define CRT_PROXY_LIB_NDEBUG
+#endif // !_DEBUG
+
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 // default lock/unlock is no lock / no unlock
@@ -39,12 +41,9 @@
 
 #if __has_include("crt_proxy_lib_lock.h")
     #include "crt_proxy_lib_lock.h"
-
 #ifndef CRT_PROXY_LIB_PADLOCK
 #error  CRT_PROXY_LIB_PADLOCK is not defined?
 #endif // ! CRT_PROXY_LIB_LOCK
-
-
 #else
 // defualt is no locking
     #ifndef CRT_PROXY_LIB_PADLOCK
