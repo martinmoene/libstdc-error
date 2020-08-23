@@ -4,18 +4,19 @@
 > Copyright &copy; 2019-2020, Dusan B. Jovanovic (dbj@dbj.org)
 
 - [1. motivation](#1-motivation)
+  - [1.1. The CL Kernel Mode](#11-the-cl-kernel-mode)
 - [2. design](#2-design)
   - [2.1. returns handling is new error handling policy](#21-returns-handling-is-new-error-handling-policy)
   - [2.2. Logging is important](#22-logging-is-important)
 - [3. Implementation details](#3-implementation-details)
   - [3.1. Locking](#31-locking)
-  - [3.3. Code structure details](#33-code-structure-details)
-  - [3.2. benchmarking attitude](#32-benchmarking-attitude)
+  - [3.2. Code structure details](#32-code-structure-details)
+  - [3.3. benchmarking attitude](#33-benchmarking-attitude)
   - [3.4. Dependencies](#34-dependencies)
 
 ## 1. motivation
 
-Circa 2020 C++ is very rarely, if ever, used for application programming. C++ is used for systems programming.
+Circa 2020, C++ is very rarely, if ever, used for application programming. C++ is used for systems programming.
 
 Who might use this library?  Teams wishing to code in standard C++ but who are under limitations, grouped as follows in two sets.
 
@@ -39,7 +40,20 @@ Very often heap allocation is added to the list above. These limitations often l
     3. not crashing but returning wrong results
        - example: empty strings as arguments 
 
-Thus all of the above are limiting the design decisions and directly shaping the implementation.   
+Thus all of the above are limiting the design decisions and directly shaping the implementation. 
+
+### 1.1. The CL Kernel Mode
+
+We might say this library is also for the people who use standard C++ **and** are building  using CL /kernel switch.
+Here is the table from [further reading](https://docs.microsoft.com/en-us/cpp/build/reference/kernel-create-kernel-mode-binary?view=vs-2019) on-line:
+
+| Behavior Type	| /kernel Behavior |
+|---------------|------------------|
+|C++ Exception Handling	|Disabled. All instances of the throw and try keywords emit a compiler error (except for the exception specification throw()). No /EH options are compatible with /kernel, except for /EH-.
+|RTTI |	Disabled. All instances of the dynamic_cast and typeid keywords emit a compiler error, unless dynamic_cast is used statically.
+| new and delete | You must explicitly define the new() or delete() operator; neither the compiler nor the runtime will supply a default definition.
+
+NOTE: Sampling console app, part of this repository, is indeed built with the `/kernel` switch in use.
 
 ## 2. design
 
@@ -160,7 +174,7 @@ noexcept
     // ... the rest goes here ...
 }
 ```
-### 3.3. Code structure details
+### 3.2. Code structure details
 
 - one header and one cpp file
    - just include and use
@@ -183,8 +197,9 @@ noexcept
 - **Which version of C99?**
 - it is a "cat and mouse" game one has to play with CL.exe to find out which C99 features are enabled or not
   - that might change with each visual studio update.
+  - even some C11 features are in
 - we will not use deprecated crt function, whatever that means.
-  - we will always try and use 'safe' versions
+  - we will always try and use so called 'safe' versions
 - we will [use the following](https://en.cppreference.com/w/c/experimental/dynamic) without knowing for sure if it has effect or not, while using CL.
 ```cpp
 #ifdef __STDC_ALLOC_LIB__
@@ -193,7 +208,14 @@ noexcept
 #define _POSIX_C_SOURCE 200809L
 #endif
 ```
-### 3.2. benchmarking attitude
+
+Of course user of this lib is protected also from the issue of every compile vendor having CRT `extension`, mixed with various levels of [POSIX](https://en.wikipedia.org/wiki/POSIX) conformance.
+
+An illustrative citation from that link:
+
+*Windows C Runtime Library and Windows Sockets API implement commonly used POSIX API functions for file, time, environment, and socket access, although the support remains largely incomplete and not fully interoperable with POSIX-compliant implementations...*
+
+### 3.3. benchmarking attitude
 
 - comparing code is artificial benchmarking
 - comparing applications delivers true results for:

@@ -36,13 +36,12 @@ static inline void test_strlen()
 }
 
 struct dbj_simplelog_finalizer final {
-
     ~dbj_simplelog_finalizer() {
             dbj_log_finalize();
         }
 };
 
-inline dbj_simplelog_finalizer dsf_ ;
+static dbj_simplelog_finalizer dsf_ ;
 
 int main( const int argc, char * argv[] )
 {
