@@ -140,7 +140,7 @@ constexpr inline
 // in this case we do not need our valstat alias
 // we do not use nonstd optional here
 // notice how we treat valstat as literal here
-dbj::valstat<size_t, const char * >
+valstat<size_t >
 strlen ( const char (*str)[N] ) noexcept
 {
     return { N, {} }; // OK metastate
@@ -148,7 +148,7 @@ strlen ( const char (*str)[N] ) noexcept
 
 template<size_t N>
 constexpr inline 
-dbj::valstat<size_t, const char* >
+valstat<size_t >
 strlen ( const char (&str)[N] ) noexcept
 {
     return { N, {} }; // OK metastate

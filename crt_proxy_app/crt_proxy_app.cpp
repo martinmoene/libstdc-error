@@ -2,36 +2,29 @@
 
 #include "crt_proxy_app.h"
 
-#define SX(fmt_, x_) log_info("%s : " fmt_, #x_, x_ )
+#define SX_FMT(fmt_, x_) log_info("%s : " fmt_, #x_, x_ )
 
-static inline void test_strlen()
+static inline void test_string_h_proxy()
 {
     namespace cpl = crt_proxy_lib;
 
     const char* input_ = "ABRA\v\n\f\r\t CA DABRA";
 
-    SX( "%d", cpl::strlen(input_) );
+    metatest( cpl::strlen(input_) );
 
-    SX("%d" , 19 == cpl::strlen("ABRA\v\n\f\r\t CA DABRA").value);
+    metatest( cpl::strlen("ABRA\v\n\f\r\t CA DABRA") );
 
-    SX("%d" , 1 == cpl::strlen("").value);
+    metatest( cpl::strlen("") );
 
     const char* nullstr{};
 
-    auto [val, stat] = cpl::strlen(nullstr);
+    metatest( cpl::strlen(nullstr) ) ;
 
-    if (!val)
-    {
-        // already logged
-        auto msg = stat;
-        log_warn("Already logged: %s", msg);
-    }
+    metatest( cpl::strcmp("", "OK") );
+    metatest( cpl::strcmp(0, "OK") );
 
-    SX("%s", cpl::strcmp("", "OK").status );
-    SX("%s", cpl::strcmp(0, "OK").status );
-
-    SX( "%d" , *(cpl::strcmp("NOT", "OK").value) );
-    SX( "%d" , *(cpl::strcmp("OK", "OK").value) );
+    metatest( cpl::strcmp("NOT", "OK") );
+    metatest( cpl::strcmp("OK", "OK") );
 
 }
 
@@ -48,7 +41,7 @@ int main( const int argc, char * argv[] )
     if (EXIT_SUCCESS != dbj_simple_log_startup(argv[0]))
         return EXIT_FAILURE;
 
-    test_strlen() ;
+    test_string_h_proxy() ;
 
     printf("\n\n");
 
