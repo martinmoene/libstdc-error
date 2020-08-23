@@ -2,12 +2,17 @@
 <h1>crt proxy lib</h1>
 
 > Copyright &copy; 2019-2020, Dusan B. Jovanovic (dbj@dbj.org)
+> 
+> LICENSE DBJ -- https://dbj.org/license_dbj/ 
+
 
 - [1. motivation](#1-motivation)
   - [1.1. The CL Kernel Mode](#11-the-cl-kernel-mode)
 - [2. design](#2-design)
   - [2.1. returns handling is new error handling policy](#21-returns-handling-is-new-error-handling-policy)
-  - [2.2. Logging is important](#22-logging-is-important)
+  - [2.2. For Standard C++ users](#22-for-standard-c-users)
+    - [2.2.1. True noexcept](#221-true-noexcept)
+  - [2.3. Logging is important](#23-logging-is-important)
 - [3. Implementation details](#3-implementation-details)
   - [3.1. Locking](#31-locking)
   - [3.2. Code structure details](#32-code-structure-details)
@@ -57,26 +62,6 @@ NOTE: Sampling console app, part of this repository, is indeed built with the `/
 
 ## 2. design
 
-- standard C++ (17 or better) core language
-  - no classes
-  - no inheritance
-  - overloads are ok and are in use inside. Example:
-```cpp
-template<size_t N>
-constexpr inline size_t strlen ( const char (*str)[N] ) noexcept
-{
-    return N;
-}
-
-template<size_t N>
-constexpr inline size_t strlen ( const char (&str)[N] ) noexcept
-{
-    return N;
-}
-```
-- compile time assertions are used
-  - `static_assert()`
-
 ### 2.1. returns handling is new error handling policy
 
 - no runtime exit, abort or crash
@@ -109,7 +94,37 @@ namespace dbj {
 - **future extension**: status returned is handle to the message logged
    -  that handle will be GUID inside a `const char *` string
 
-### 2.2. Logging is important
+### 2.2. For Standard C++ users
+
+- standard C++ (17 or better) core language
+  - no classes
+  - no inheritance
+  - overloads are ok and are in use inside. Example:
+```cpp
+template<size_t N>
+constexpr inline size_t strlen ( const char (*str)[N] ) noexcept
+{
+    return N;
+}
+
+template<size_t N>
+constexpr inline size_t strlen ( const char (&str)[N] ) noexcept
+{
+    return N;
+}
+```
+- compile time assertions are used
+  - `static_assert()`
+
+#### 2.2.1. True noexcept
+
+Issue with C++ and `noexcept` and LLVM and GCC is they implement some key CRT functions as throwing exceptions, like for example malloc.  
+
+Known [way around that](https://compiler-explorer.com/z/rco9eh) is to cast to `noexcept` function pointer.
+
+One using CL does not need that. But we know about it and we might use it if necessary.
+
+### 2.3. Logging is important
 
 Win console is just an win32 app with std streams created and attached.
 C/C++ real life apps are not console apps. And (very likely) are not GUI apps
@@ -209,7 +224,7 @@ noexcept
 #endif
 ```
 
-Of course user of this lib is protected also from the issue of every compile vendor having CRT `extension`, mixed with various levels of [POSIX](https://en.wikipedia.org/wiki/POSIX) conformance.
+Of course users of this lib is protected also from the issue of every compile vendor having CRT `extension`, mixed with various levels of [POSIX](https://en.wikipedia.org/wiki/POSIX) conformance.
 
 An illustrative citation from that link:
 
