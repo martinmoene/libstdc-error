@@ -3,7 +3,7 @@
 
 /* (c) 2019-2020 by dbj.org   -- LICENSE DBJ -- https://dbj.org/license_dbj/ */
 
-#define STRICT
+#define STRICT 1
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 

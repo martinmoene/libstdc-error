@@ -3,29 +3,29 @@
 
 > Copyright &copy; 2019-2020, Dusan B. Jovanovic (dbj@dbj.org)
 > 
-> LICENSE DBJ -- https://dbj.org/license_dbj/ 
+> LICENSE_DBJ -- https://dbj.org/license_dbj/ 
 
 
 - [1. motivation](#1-motivation)
-  - [1.1. The CL Kernel Mode](#11-the-cl-kernel-mode)
+  - [1.1. The Windows, CL and Kernel Mode](#11-the-windows-cl-and-kernel-mode)
 - [2. design](#2-design)
   - [2.1. returns handling is new error handling policy](#21-returns-handling-is-new-error-handling-policy)
-  - [2.2. For Standard C++ users](#22-for-standard-c-users)
-    - [2.2.1. True noexcept](#221-true-noexcept)
-  - [2.3. Logging is important](#23-logging-is-important)
+  - [2.2. Built For Standard C++ users](#22-built-for-standard-c-users)
+    - [2.2.1. True noexcept issue](#221-true-noexcept-issue)
+  - [2.3. Repeat: Logging is important](#23-repeat-logging-is-important)
 - [3. Implementation details](#3-implementation-details)
   - [3.1. Locking](#31-locking)
   - [3.2. Code structure details](#32-code-structure-details)
-  - [3.3. benchmarking attitude](#33-benchmarking-attitude)
+  - [3.3. Our benchmarking attitude](#33-our-benchmarking-attitude)
   - [3.4. Dependencies](#34-dependencies)
 
 ## 1. motivation
 
-Circa 2020, C++ is very rarely, if ever, used for application programming. C++ is used for systems programming.
+Circa 2020, C++ is very rarely, if ever, used for application programming. In the Cloud reality, C++ is used for systems programming.
 
-Who might use this library?  Teams wishing to code in standard C++ but who are under limitations, grouped as follows in two sets.
+Who this library is for?  Teams wishing to code in standard C++ but who are under limitations, grouped as follows.
 
-- Limitations of  restricted run-time requirements
+1. Limitations of  run-time requirements
   - specifically **not allowed to use** any of the following
     -  std lib
     -  throw/try/catch
@@ -36,21 +36,21 @@ Who might use this library?  Teams wishing to code in standard C++ but who are u
 
 Very often heap allocation is added to the list above. These limitations often leave no choice but using C Run Time aka CRT. But, CRT has issues too.
 
-- Limitation imposed by crt legacy issues. 
-  - CRT legacy issues (non exhaustive list)
+2. Limitation imposed by crt legacy issues. 
+  - Non exhaustive list
     1. errno based error handling aka using globals
-       - example: pure function can not use globals 
+       - pure function can not use globals 
     2. crashing on wrong input
        - example: null arguments 
     3. not crashing but returning wrong results
        - example: empty strings as arguments 
 
-Thus all of the above are limiting the design decisions and directly shaping the implementation. 
+Thus all of the above are limiting the design decisions and directly shaping the implementation. All raising the level of design complexity and lowering the level of feasibility of the whole solutions.
 
-### 1.1. The CL Kernel Mode
+### 1.1. The Windows, CL and Kernel Mode
 
-We might say this library is also for the people who use standard C++ **and** are building  using CL /kernel switch.
-Here is the table from [further reading](https://docs.microsoft.com/en-us/cpp/build/reference/kernel-create-kernel-mode-binary?view=vs-2019) on-line:
+This library is for the people who use Windows **and** standard C++ **and** are building  using CL /kernel switch.
+Here is the key table from [further reading](https://docs.microsoft.com/en-us/cpp/build/reference/kernel-create-kernel-mode-binary?view=vs-2019) on-line:
 
 | Behavior Type	| /kernel Behavior |
 |---------------|------------------|
@@ -58,22 +58,25 @@ Here is the table from [further reading](https://docs.microsoft.com/en-us/cpp/bu
 |RTTI |	Disabled. All instances of the dynamic_cast and typeid keywords emit a compiler error, unless dynamic_cast is used statically.
 | new and delete | You must explicitly define the new() or delete() operator; neither the compiler nor the runtime will supply a default definition.
 
-NOTE: Sampling console app, part of this repository, is indeed built with the `/kernel` switch in use.
+NOTE: Console app, part of this repository, is indeed built with the `/kernel` switch in use.
 
 ## 2. design
 
 ### 2.1. returns handling is new error handling policy
 
+- based on the metastate paradigm -- [P2192](https://gitlab.com/dbjdbj/valstat/-/blob/07ce13ab26f662c7301a463fee55dc21cbd7a585/P2192R2.md)
 - no runtime exit, abort or crash
 - null input, empty input or logically wrong input will provoke different responses
   - API consuming functions will have to capture that
-- based on the metastate paradigm -- [P2192](https://gitlab.com/dbjdbj/valstat/-/blob/07ce13ab26f662c7301a463fee55dc21cbd7a585/P2192R2.md)
 - no special return types
-- no special return structures beside valstat definitions
+  - no special return structures beside valstat definitions
+
+This one template is all that is needed to adopt the metastate paradigm.
 ```cpp
 // valstat is not (yet) in the std namespace
-namespace dbj {
+namespace your_company_name_here {
     template <typename T_, typename S_ >
+    [[nodiscard]] 
     struct valstat final {
         using type       = valstat ;
         using value_type = T_;
@@ -88,13 +91,15 @@ namespace dbj {
     - template given parameters is a definition
     - template definition is a type
     - template alias is still a template
-- status returned is always `const char *` message
+- in this library status returned is always `const char *` message
   - decoupling users from crt error handling
-  - message is always already logged
-- **future extension**: status returned is handle to the message logged
+  - when it arrives to the caller message is already logged
+- **future extension**: status returned as handle to the message logged
    -  that handle will be GUID inside a `const char *` string
+   -  that will allow programmatic querying of the log
+   -  that will raise the complexity, thus it might be not implemented. It depends on the future requirements of large adopters.
 
-### 2.2. For Standard C++ users
+### 2.2. Built For Standard C++ users
 
 - standard C++ (17 or better) core language
   - no classes
@@ -116,21 +121,21 @@ constexpr inline size_t strlen ( const char (&str)[N] ) noexcept
 - compile time assertions are used
   - `static_assert()`
 
-#### 2.2.1. True noexcept
+#### 2.2.1. True noexcept issue
 
 Issue with C++ and `noexcept` and LLVM and GCC is they implement some key CRT functions as throwing exceptions, like for example malloc.  
 
 Known [way around that](https://compiler-explorer.com/z/rco9eh) is to cast to `noexcept` function pointer.
 
-One using CL does not need that. But we know about it and we might use it if necessary.
+Teams using CL do not need that. But we know about it and we might use it if necessary.
 
-### 2.3. Logging is important
+### 2.3. Repeat: Logging is important
 
 Win console is just an win32 app with std streams created and attached.
 C/C++ real life apps are not console apps. And (very likely) are not GUI apps
-they are just server side apps. Invisible. 
+they are server side apps. Invisible. 
 
-Each data center or just simply server side component will have to have some logging used. Without logging in place admins can not see what is going on with your component. Neither can you.
+Each data center or simply server side component will have to have some logging used. Without logging in place admins can not see what is going on with your component. Neither can you.
 
 Users of crt proxy lib need to deliver header named `crt_proxy_lib_log.h` with actual logging implementation. Macros to be defined are:
 ```cpp
@@ -142,7 +147,7 @@ CRT_PROXY_LIB_LOG_WARN(...);
 CRT_PROXY_LIB_LOG_ERROR(...);
 CRT_PROXY_LIB_LOG_FATAL(...);
 ```
-if this header is not defined `crt_proxy_lib_log_default.h` is used which 
+If this header is not delivered by the users, `crt_proxy_lib_log_default.h` is used which 
 defines macros that print to stderr.
 
 ```cpp
@@ -158,7 +163,7 @@ defines macros that print to stderr.
 
 ### 3.1. Locking
 
-This library users may provide resilience in the presence of threads. Either users provide lock/unlock type or there is no locking:
+This library users may provide resilience in the presence of threads. Either users provide lock/unlock type or there is no locking by default:
 ```cpp
 // default lock/unlock is no lock / no unlock
 // user defined padlock type releases semaphore/mutex/critical section in destructor
@@ -171,13 +176,13 @@ This library users may provide resilience in the presence of threads. Either use
 #error  CRT_PROXY_LIB_PADLOCK is not defined?
 #endif // ! CRT_PROXY_LIB_LOCK
 #else
-// defualt is no locking
+// default is no locking
     #ifndef CRT_PROXY_LIB_PADLOCK
     #define CRT_PROXY_LIB_PADLOCK
     #endif // ! CRT_PROXY_LIB_LOCK
 #endif // 
 ```  
-Therefore users need to provide `crt_proxy_lib_lock.h` . Each proxy function implementation start in this manner:
+Therefore for MT resilience, users need to provide `crt_proxy_lib_lock.h`. Each proxy function implementation start in this manner:
 ```cpp
 // standard prologue example
 valstat<size_t> strlen 
@@ -193,7 +198,7 @@ noexcept
 
 - one header and one cpp file
    - just include and use
-   - no lib or dll is built
+   - no lib or dll 
    - recommendation: use as git sub-module
 - Windows only but not using WIN32 API
 - Visual Studio 2019 using both CL and CLANG
@@ -230,28 +235,33 @@ An illustrative citation from that link:
 
 *Windows C Runtime Library and Windows Sockets API implement commonly used POSIX API functions for file, time, environment, and socket access, although the support remains largely incomplete and not fully interoperable with POSIX-compliant implementations...*
 
-### 3.3. benchmarking attitude
+### 3.3. Our benchmarking attitude
 
+- to benchmark use equivalent of linux time command
 - comparing code is artificial benchmarking
 - comparing applications delivers true results for:
   - performance
   - size
-- Windows Task Manager results are part of benchmarking results
+- Windows Task Manager (WTM) results are part of benchmarking results
+  - did you know WTM has the "energy" column?
 
 ### 3.4. Dependencies
 
-Martin Moene's non [standard bare optional](https://github.com/martinmoene/optional-bare).
+We use Martin Moene's non [standard bare optional](https://github.com/martinmoene/optional-bare).
 It allows us to have the optional, minus std lib, minus exceptions.
 
-The limitations are the handled value is required to be copyable and default constructible.
+The limitations are: the handled value is required to be copyable and default constructible.
 
 ```cpp
+// we make sure bare optional is used and
+// there are no exceptions thrown from it
 // nonstd optional
 #define optional_CONFIG_SELECT_OPTIONAL optional_OPTIONAL_NONSTD
 // no exceptions
 #define optional_CONFIG_NO_EXCEPTIONS 1
 
 #include <nonstd/optional.h>
+
 namespace crt_proxy_lib 
 {
     // any type used. nonstd::optional permitting.
@@ -264,9 +274,10 @@ namespace crt_proxy_lib
     > ;
 }
 ```
-Now we can readily ask the occupancy state; on both value and status. For any value type used. nonstd::optional permitting.
+Now we can readily ask the occupancy state; on both value and status. For any value type used. bare optional permitting.
 ```cpp
-// example
+// val type is int inside bare optional
+// status_msg is const char *
 auto [ val, status_msg ] = crt_proxy_lib::atoi( "42" ) ;
 
 // the occupancy of the val returned
@@ -277,6 +288,7 @@ if ( ! val )
      log ( status_msg ) ;
 // not empty
 if ( val ) 
-     // use the value returned
-     log ( *val ) ;    
+     // use the int value returned
+     log ( "OK return: %d" , *val ) ;    
 ```
+Bare optional limitations for types handled, are irrelevant in the context of this library because CRT arguments and return values are almost always fundamental types or pointers to them.

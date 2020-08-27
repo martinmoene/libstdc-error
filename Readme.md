@@ -1,6 +1,20 @@
 
+# What is this repository "doing" ?
 
-# Original 
+It is also doing what the original repo has done. Namely "Provide error checked version of various functions from std C library." But actually delivering much more.
+
+Please see [the post associated](https://dbj.org/what-is-your-error-handling-policy/) with this repository.
+
+---
+
+Created 2020 August by dbj@dbj.org (Dusan B. Jovanovic)
+
+(c) 2020 by dbj@dbj.org
+
+Distributed under the 'LICENSE_DBJ' https://dbj.org/license_dbj/
+
+---
+## Original readme 
 
 Provide error checked version of various functions from std C library.
 

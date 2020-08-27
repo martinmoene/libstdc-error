@@ -7,7 +7,7 @@
 #error Sorry ... Windows only.
 #endif
 
-#define CRT_PROXY_LIB_VERSION "0.1.0"
+#define CRT_PROXY_LIB_VERSION "0.7.0"
 
 #ifndef   CRT_PROXY_LIB_CPLUSPLUS
 # if defined(_MSVC_LANG ) && !defined(__clang__)
@@ -122,18 +122,17 @@ namespace crt_proxy_lib
 #endif // __cplusplus
 
 // NOTE: we do use CRT names in this namespace and that compiles
-// which means these names can not be used without namespace prefix
-// of course one can and will do something like
+// These names can not be used without namespace prefix
+// One can and will do something like
 //   namespace cpl =  crt_proxy_lib;
 
-// strlen overloads
-// unlike CRT we can use overloads here
-// notice the argument type required so overloads bellow are captured
 // this overload uses crt strlen and is thus hidden inside the cpp
 // instead of crashing the app we return ERROR metastate
 // on null argument used
 valstat<size_t> strlen ( const char * & ) noexcept;
 
+// unlike CRT we can use overloads here
+// notice the argument type required so overloads bellow are captured
 template<size_t N>
 constexpr inline 
 // we always return a valstat for the uniformity of calling algorithms
@@ -171,7 +170,7 @@ constexpr bool is_empty(const char(&s_) [N]) noexcept {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-// proxyes for <string.h>
+// proxys for <string.h>
 //
 valstat< int >      strcmp(const char* lhs_, const char* rhs_);
 valstat< void* >    memccpy(void* CRT_PROXY_LIB_RESTRICT, const void* CRT_PROXY_LIB_RESTRICT, int, size_t);

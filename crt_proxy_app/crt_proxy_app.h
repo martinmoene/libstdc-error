@@ -33,6 +33,9 @@
 
 namespace dbj::picotest {
 
+	// aim is to produce comma delimited output aka CSV
+	constexpr auto delimiter_char = ',';
+
 #ifndef VT100_ESC
 
 #define VT100_ESC "\x1b["
@@ -70,7 +73,8 @@ namespace dbj::picotest {
 	// return false on empty
 	inline auto show_option = [](const char* prompt_, auto opt_) ->bool
 	{
-		cout << "\t" << prompt_ << "   ";
+		assert(prompt_);
+		cout << delimiter_char << prompt_ << " ";
 		if (opt_.has_value()) {
 			cout << opt_.value();
 			return true;
@@ -81,7 +85,7 @@ namespace dbj::picotest {
 
 	inline auto show_status = [](const char* prompt_, const char* stat_) ->bool
 	{
-		cout << "\t" << prompt_ << "   ";
+		cout << delimiter_char << prompt_ << " ";
 		if (stat_) {
 			cout << stat_;
 			return true;
@@ -94,22 +98,20 @@ namespace dbj::picotest {
 	// status is always const char *
 	inline auto show_metastate = [](const char* prompt_, auto val_, const char* stat_) {
 
-		cout << "\n\n" << (prompt_ ? prompt_ : "");
+		cout << "\n" << (prompt_ ? prompt_ : "");
 
 		bool value_state = val_.has_value();
 		bool status_state = stat_ != nullptr;
 
-		cout << "\nmetastate: ";
-		if (value_state && status_state) { cout << VT100_LIGHT_GREEN << "info"; }
-		if (value_state && !status_state) { cout << "ok"; }
+		cout << delimiter_char << " " ; //  "\nmetastate: ";
+		if (value_state && status_state) { cout << VT100_LIGHT_BLUE << "info"; }
+		if (value_state && !status_state) { cout << VT100_LIGHT_GREEN << "ok"; }
 		if (!value_state && status_state) { cout << VT100_LIGHT_RED << "error"; }
-		if (!value_state && !status_state) { cout << VT100_LIGHT_BLUE << "empty"; }
+		if (!value_state && !status_state) { cout << VT100_LIGHT_YELLOW << "empty"; }
 		cout << VT100_RESET ;
-		show_option("Value : ", val_);
-		show_status("Status: ", stat_);
-		cout << "\n";
-
-
+		show_option(" ", val_);
+		show_status(" ", stat_);
+//		cout << "\n";
 	};
 
 	// for this to work we must send  
